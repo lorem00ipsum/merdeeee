@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAZOOKA | Mon Profil</title>
+  <meta name="description" content="Gérez votre compte BAZOOKA – Modifiez votre avatar, votre mot de passe et consultez vos informations personnelles.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-weight='bold'>🔴</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bazooka: { red: '#ff0a0a', 'red-dark': '#cc0000', black: '#0a0a0a', gray: '#1a1a1a', 'gray-dark': '#111111', gold: '#ffd700' }
+          },
+          fontFamily: {
+            display: ['Impact', 'Arial Black', 'sans-serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    :root { --bazooka-red: #ff0a0a; --bazooka-black: #0a0a0a; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bazooka-black); color: #fff; font-family: 'Inter', sans-serif;
+      overflow-x: hidden; margin: 0; padding: 0;
+    }
+    .font-display { font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
+    .glass {
+      background: rgba(255,255,255,0.03); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.3s ease;
+    }
+    .glass-dark { background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,10,10,0.2); }
+    .gradient-bazooka {
+      background: linear-gradient(135deg, #ff0a0a 0%, #ff3333 50%, #ff0a0a 100%);
+      background-size: 200% 200%; animation: gradient-shift 4s ease infinite;
+    }
+    @keyframes gradient-shift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .text-bazooka { color: var(--bazooka-red); }
+    .shadow-bazooka { box-shadow: 0 0 30px rgba(255,10,10,0.4), 0 10px 40px rgba(0,0,0,0.8); }
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 700;
+      transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.05em;
+      cursor: pointer; border: none; outline: none;
+      background: linear-gradient(135deg,#ff0a0a 0%,#ff3333 50%,#ff0a0a 100%); color: white;
+      box-shadow: 0 0 20px rgba(255,10,10,0.4);
+    }
+    .btn-primary:hover { box-shadow: 0 0 40px rgba(255,10,10,0.7); transform: translateY(-2px) scale(1.02); }
+    .btn-primary:active { transform: translateY(0) scale(0.98); }
+    .btn-outline-red {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 700;
+      transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.05em;
+      cursor: pointer; border: 2px solid var(--bazooka-red); color: var(--bazooka-red); background: transparent;
+    }
+    .btn-outline-red:hover { background: var(--bazooka-red); color: white; box-shadow: 0 0 30px rgba(255,10,10,0.5); }
+    .input-bazooka {
+      width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem;
+      background: rgba(26,26,26,0.8); border: 1px solid rgba(255,10,10,0.3);
+      color: white; font-size: 1rem; transition: all 0.3s ease;
+    }
+    .input-bazooka:focus { outline: none; border-color: var(--bazooka-red); box-shadow: 0 0 0 3px rgba(255,10,10,0.2); }
+    .input-bazooka::placeholder { color: #6b7280; }
+    .avatar-upload { position: relative; cursor: pointer; transition: all 0.3s ease; display: inline-block; }
+    .avatar-upload:hover::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,10,10,0.7); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-upload img { transition: transform 0.3s ease; }
+    .avatar-upload:hover img { transform: scale(1.1); }
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--bazooka-red); color: white;
+      padding: 1rem 2rem; border-radius: 0.5rem;
+      font-weight: 600; box-shadow: 0 10px 40px rgba(255,10,10,0.5);
+      z-index: 10000; animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid rgba(255,10,10,0.3);
+      border-top-color: var(--bazooka-red); border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .logo-container { position: relative; display: flex; align-items: center; justify-content: center; overflow: visible; border-radius: 0.75rem; isolation: isolate; }
+    .logo-img { position: relative; z-index: 2; object-fit: contain; width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(255,10,10,0.35)); transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.92; }
+    .logo-navbar { padding: 4px; }
+    .group:hover .logo-img { filter: drop-shadow(0 0 20px rgba(255,10,10,0.85)); transform: scale(1.06); opacity: 1; }
+    .logo-container::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 35%; background: linear-gradient(to bottom,rgba(255,255,255,0.2) 0%,rgba(255,255,255,0.05) 50%,transparent 100%); border-radius: 0.75rem 0.75rem 0 0; pointer-events: none; }
+    .logo-container::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center,rgba(255,10,10,0.12) 0%,transparent 70%); border-radius: inherit; pointer-events: none; }
+    @media (max-width: 640px) {
+      .btn-primary, .btn-outline-red { padding: 0.625rem 1.25rem; font-size: 0.875rem; }
+      .profile-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 glass-dark">
+    <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="index.html" class="flex items-center space-x-3 group">
+        <div class="w-12 h-12 gradient-bazooka rounded-xl flex items-center justify-center shadow-bazooka logo-container logo-navbar">
+          <img src="logo.png" alt="BAZOOKA Logo" class="logo-img">
+        </div>
+        <div>
+          <span class="font-display font-black text-3xl text-white block leading-none">BAZOOKA</span>
+          <span class="text-xs text-bazooka-red tracking-widest uppercase">Premium Moto</span>
+        </div>
+      </a>
+      <div class="hidden lg:flex items-center space-x-8">
+        <a href="index.html#motos" class="text-gray-300 hover:text-bazooka-red transition-colors font-semibold uppercase text-sm tracking-wider">Motos</a>
+        <a href="index.html#scooters" class="text-gray-300 hover:text-bazooka-red transition-colors font-semibold uppercase text-sm tracking-wider">Scooters</a>
+        <a href="index.html#pieces" class="text-gray-300 hover:text-bazooka-red transition-colors font-semibold uppercase text-sm tracking-wider">Pièces</a>
+        <a href="index.html#accessoires" class="text-gray-300 hover:text-bazooka-red transition-colors font-semibold uppercase text-sm tracking-wider">Accessoires</a>
+      </div>
+      <div class="hidden lg:flex items-center space-x-4">
+        <button onclick="toggleCart()" class="relative p-2 hover:bg-bazooka-gray/50 rounded-lg transition-colors" title="Panier">
+          <i data-lucide="shopping-cart" class="h-5 w-5 text-gray-400"></i>
+          <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-bazooka-red text-xs rounded-full flex items-center justify-center font-bold">0</span>
+        </button>
+        <a href="profil.html" class="px-6 py-2 glass rounded-lg hover:border-bazooka-red/30 transition-colors font-semibold text-sm">
+          Mon Profil
+        </a>
+        <button onclick="logout()" class="px-6 py-2 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10 transition-colors font-semibold">
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE CONTENT -->
+  <main class="pt-32 pb-20">
+    <div class="container mx-auto px-6">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl font-display font-black mb-8 text-center text-white">
+          Mon Profil
+        </h1>
+
+        <!-- Profile Card -->
+        <div class="glass rounded-2xl p-8 md:p-12 border border-bazooka-red/20 mb-8">
+          <div class="profile-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Avatar Section -->
+            <div class="flex flex-col items-center text-center">
+              <div class="avatar-upload mb-4" onclick="document.getElementById('avatar-input').click()">
+                <img id="profile-avatar-large" src="" alt="Avatar" class="w-40 h-40 rounded-full object-cover border-4 border-bazooka-red/30 shadow-bazooka">
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full">
+                  <i data-lucide="camera" class="h-12 w-12 text-white"></i>
+                </div>
+              </div>
+              <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="uploadAvatar()">
+              <p class="text-sm text-gray-400">Cliquez pour changer d'avatar</p>
+              <p id="avatar-status" class="text-xs text-gray-500 mt-2"></p>
+            </div>
+
+            <!-- User Info -->
+            <div class="md:col-span-2 space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm text-gray-400 mb-1 uppercase tracking-wider text-xs">Email</label>
+                  <p id="user-email" class="text-xl font-bold text-white break-all"></p>
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-400 mb-1 uppercase tracking-wider text-xs">Rôle</label>
+                  <p id="user-role" class="text-xl font-bold text-bazooka-red uppercase"></p>
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-400 mb-1 uppercase tracking-wider text-xs">Membre depuis</label>
+                  <p id="user-created-at" class="text-white"></p>
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-400 mb-1 uppercase tracking-wider text-xs">ID</label>
+                  <p id="user-id" class="text-gray-500 text-sm font-mono break-all"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="glass rounded-2xl p-8 md:p-12 border border-bazooka-red/20 mb-8">
+          <h3 class="text-2xl font-display font-bold mb-6 text-bazooka-red flex items-center">
+            <i data-lucide="lock" class="h-6 w-6 mr-2"></i>
+            Modifier le mot de passe
+          </h3>
+          <form id="password-form" class="space-y-4 max-w-md">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Mot de passe actuel</label>
+              <input type="password" id="current-password" placeholder="••••••••" class="input-bazooka bg-bazooka-black/60" required>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Nouveau mot de passe</label>
+              <input type="password" id="new-password" placeholder="Min 8 caractères" class="input-bazooka bg-bazooka-black/60" minlength="8" required>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Confirmer le nouveau mot de passe</label>
+              <input type="password" id="confirm-password" placeholder="••••••••" class="input-bazooka bg-bazooka-black/60" minlength="8" required>
+            </div>
+            <button type="submit" class="btn-primary">
+              <i data-lucide="save" class="h-5 w-5 mr-2"></i> Mettre à jour
+            </button>
+          </form>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="glass rounded-2xl p-8 border border-red-500/30">
+          <h3 class="text-2xl font-display font-bold mb-4 text-red-500 flex items-center">
+            <i data-lucide="alert-triangle" class="h-6 w-6 mr-2"></i>
+            Zone Danger
+          </h3>
+          <p class="text-gray-300 mb-6">
+            Supprimer votre compte est <strong>irréversible</strong>. Toutes vos données (avatar, historique) seront définitivement effacées.
+          </p>
+          <button onclick="confirmDeleteAccount()" class="px-6 py-3 bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors font-semibold">
+            <i data-lucide="trash-2" class="h-5 w-5 inline mr-2"></i>
+            Supprimer mon compte
+          </button>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="mt-8 text-center">
+          <a href="index.html" class="btn-primary">
+            <i data-lucide="arrow-left" class="h-5 w-5 mr-2"></i>
+            Retour à l'accueil
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-bazooka-black border-t border-bazooka-red/20 py-16">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+        <div>
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-12 h-12 gradient-bazooka rounded-xl flex items-center justify-center shadow-bazooka logo-container logo-footer">
+              <img src="logo.png" alt="BAZOOKA Logo" class="logo-img">
+            </div>
+            <div>
+              <span class="font-display font-black text-2xl text-white block">BAZOOKA</span>
+              <span class="text-xs text-bazooka-red tracking-widest uppercase">Premium Moto</span>
+            </div>
+          </div>
+          <p class="text-gray-400 leading-relaxed mb-4">L'excellence des deux-roues. Performance, style, puissance.</p>
+          <p class="text-gray-500 text-sm"><i data-lucide="mail" class="h-4 w-4 inline mr-2"></i>magaudouxlucas08@icloud.com</p>
+        </div>
+        <div>
+          <h4 class="font-display font-bold text-lg mb-6 text-white">Catégories</h4>
+          <ul class="space-y-3 text-gray-400">
+            <li><a href="index.html#motos" class="hover:text-bazooka-red transition-colors">Motos</a></li>
+            <li><a href="index.html#scooters" class="hover:text-bazooka-red transition-colors">Scooters</a></li>
+            <li><a href="index.html#pieces" class="hover:text-bazooka-red transition-colors">Pièces</a></li>
+            <li><a href="index.html#accessoires" class="hover:text-bazooka-red transition-colors">Accessoires</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-display font-bold text-lg mb-6 text-white">Informations</h4>
+          <ul class="space-y-3 text-gray-400">
+            <li><a href="mentions-legales.html" class="hover:text-bazooka-red transition-colors">Mentions légales</a></li>
+            <li><a href="cgv.html" class="hover:text-bazooka-red transition-colors">CGV</a></li>
+            <li><a href="confidentialite.html" class="hover:text-bazooka-red transition-colors">Confidentialité</a></li>
+            <li><a href="livraison.html" class="hover:text-bazooka-red transition-colors">Livraison</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-bazooka-red/20 pt-8 text-center text-gray-500 text-sm">
+        <p>&copy; 2024 BAZOOKA Premium. Tous droits réservés.</p>
+        <p class="mt-2">Contact : magaudouxlucas08@icloud.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Page-specific logic
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!localStorage.getItem('bazooka_token')) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const token = localStorage.getItem('bazooka_token');
+      const user = JSON.parse(localStorage.getItem('bazooka_user') || '{}');
+
+      // Populate user info
+      document.getElementById('user-email').textContent = user.email || 'N/A';
+      document.getElementById('user-role').textContent = user.role === 'admin' ? 'ADMINISTRATEUR' : 'MEMBRE';
+      document.getElementById('user-created-at').textContent = user.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR') : 'N/A';
+      document.getElementById('user-id').textContent = user.id || 'N/A';
+
+      // Avatar
+      const avatarUrl = user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || 'U')}&background=ff0a0a&color=fff&size=200`;
+      document.getElementById('profile-avatar-large').src = avatarUrl;
+
+      // Initialize Lucide icons
+      if (window.lucide) window.lucide.createIcons();
+
+      // Animate entrance
+      gsap.from('.glass', { duration: 0.6, y: 30, opacity: 0, stagger: 0.1, ease: 'power2.out', delay: 0.3 });
+    });
+
+    // Password change handler
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const current = document.getElementById('current-password').value;
+      const newPass = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+
+      if (newPass !== confirm) {
+        showToast('Les mots de passe ne correspondent pas', 'error');
+        return;
+      }
+      if (newPass.length < 8) {
+        showToast('Le mot de passe doit contenir au moins 8 caractères', 'error');
+        return;
+      }
+
+      try {
+        // TODO: Implement backend endpoint for password change
+        showToast('Fonctionnalité à venir – Modifiez via l\'interface admin pour l\'instant', 'info');
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+      }
+    });
+
+    // Confirm account deletion
+    function confirmDeleteAccount() {
+      if (!confirm('ATTENTION : Cette action est irréversible. Voulez-vous vraiment supprimer votre compte ?')) return;
+      showToast('Suppression de compte – Fonctionnalité à venir', 'info');
+      // TODO: Implement DELETE /api/users/me
+    }
+
+    // Globals
+    window.logout = function() {
+      localStorage.removeItem('bazooka_token');
+      localStorage.removeItem('bazooka_user');
+      window.location.href = 'index.html';
+    };
+
+    window.uploadAvatar = async function() {
+      const fileInput = document.getElementById('avatar-input');
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('avatar-status');
+      status.textContent = 'Upload en cours...';
+
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const token = localStorage.getItem('bazooka_token');
+        const res = await fetch('/api/upload/avatar', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('profile-avatar-large').src = data.url;
+          // Update user in localStorage
+          const user = JSON.parse(localStorage.getItem('bazooka_user'));
+          user.avatar = data.url;
+          localStorage.setItem('bazooka_user', JSON.stringify(user));
+          showToast('Avatar mis à jour !', 'success');
+          status.textContent = '';
+        } else {
+          throw new Error(data.error || 'Upload échoué');
+        }
+      } catch (error) {
+        showToast('Erreur: ' + error.message, 'error');
+        status.textContent = 'Erreur';
+      }
+    };
+
+    window.showToast = function(message, type = 'info') {
+      const container = document.getElementById('toast-container') || createToastContainer();
+      const toast = document.createElement('div');
+      const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-bazooka-red' };
+      toast.className = `toast ${colors[type] || colors.info} px-6 py-4 rounded-lg shadow-lg font-semibold`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    };
+
+    function createToastContainer() {
+      const div = document.createElement('div');
+      div.id = 'toast-container';
+      div.className = 'fixed bottom-8 right-8 z-[120] space-y-2';
+      document.body.appendChild(div);
+      return div;
+    }
+
+    window.toggleCart = function() {
+      // Cart is not used on this page but defined to avoid errors
+      console.log('Cart toggle');
+    };
+  </script>
+</body>
+</html>
