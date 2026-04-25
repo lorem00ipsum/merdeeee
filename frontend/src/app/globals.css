@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer base {
+  * {
+    @apply border-gray-800;
+  }
+
+  body {
+    @apply bg-dark-900 text-white font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+
+  ::selection {
+    @apply bg-premium-orange/30 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-premium-orange/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-premium-orange;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-white/5 border border-white/10;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-xl bg-dark-900/80 border border-dark-700/50;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, #ff5500 0%, #ff7700 50%, #ff9900 100%);
+  }
+
+  .gradient-dark {
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #ff5500 0%, #ffd700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .shadow-premium {
+    box-shadow:
+      0 10px 40px -10px rgba(255, 85, 0, 0.3),
+      0 20px 60px -20px rgba(0, 0, 0, 0.5);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 40px rgba(255, 85, 0, 0.3);
+  }
+
+  .btn-premium {
+    @apply inline-flex items-center justify-center px-8 py-3 rounded-lg font-semibold
+           gradient-primary text-white transition-all duration-300
+           hover:shadow-glow hover:scale-105 active:scale-95;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-8 py-3 rounded-lg font-semibold
+           border-2 border-premium-orange text-premium-orange
+           hover:bg-premium-orange hover:text-white transition-all duration-300;
+  }
+
+  .card-premium {
+    @apply glass rounded-2xl p-6 transition-all duration-300
+           hover:border-premium-orange/50 hover:shadow-glow;
+  }
+
+  .input-premium {
+    @apply w-full px-4 py-3 rounded-lg bg-dark-800 border border-dark-600
+           text-white placeholder-gray-500 focus:outline-none focus:border-premium-orange
+           focus:ring-2 focus:ring-premium-orange/20 transition-all;
+  }
+
+  .badge-premium {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+           bg-premium-orange/20 text-premium-orange border border-premium-orange/30;
+  }
+}
+
+ @layer utilities {
+   .text-shadow {
+     text-shadow: 0 0 20px rgba(255, 85, 0, 0.5);
+   }
+
+   .backdrop-premium {
+     backdrop-filter: blur(20px) saturate(180%);
+     -webkit-backdrop-filter: blur(20px) saturate(180%);
+   }
+
+   /* Scroll animation base states */
+   .animate-on-scroll {
+     opacity: 0;
+     transform: translateY(30px);
+     transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+   }
+
+   .animate-on-scroll.animate-visible {
+     opacity: 1;
+     transform: translateY(0);
+   }
+
+   /* Fade in up animation (used by JS) */
+   .animate-fade-in-up {
+     animation: fadeInUp 0.8s ease-out forwards;
+   }
+
+   /* Scale in animation for stat cards */
+   .animate-scale-in {
+     animation: scaleIn 0.5s ease-out forwards;
+   }
+
+   /* Switch press feedback */
+   .animate-switch-press {
+     animation: switchPress 0.2s ease-out;
+   }
+ }
